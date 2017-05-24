@@ -1,0 +1,20 @@
+{
+  "name": "lisa-plugin-kodi",
+  "main": "index.js",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "eslint --fix . && mocha"
+  },
+  "eslintConfig": {
+    "extends": "trails"
+  },
+  "dependencies": {
+    "kodi-rpc": "^1.0.0",
+    "lisa-plugin": "^0.0.12"
+  },
+  "devDependencies": {
+    "eslint": "^3.10.2",
+    "eslint-config-trails": "^1.2.0",
+    "mocha": "^3.1.2"
+  }
+}

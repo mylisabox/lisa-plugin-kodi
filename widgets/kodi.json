@@ -1,0 +1,10 @@
+{
+  "type": "vbox",
+  "children": [
+    {
+      "type": "label",
+      "name": "name",
+      "value": "name"
+    }
+  ]
+}
