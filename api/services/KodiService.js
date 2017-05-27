@@ -19,7 +19,7 @@ module.exports = class KodiService extends Service {
         return Promise.resolve()
     }
 
-    playTvShow(show, episode, roomId) {
+    playTvShow(show, season, episode, roomId) {
         const criteria = {}
         if (roomId) {
             criteria.roomId = roomId
@@ -53,7 +53,7 @@ module.exports = class KodiService extends Service {
                                     if (episodes.length > 0) {
                                         if (episode) {
                                             const foundEpisodes = episodes.filter(item => {
-                                                return item.label.toLowerCase().indexOf('x' + episode + '.') != -1
+                                                return item.label.toLowerCase().indexOf(season + 'x' + episode + '.') != -1
                                             })
                                             return kodi.Player.Open({item: {episodeid: foundEpisodes[0].episodeid}})
                                         }
@@ -100,7 +100,7 @@ module.exports = class KodiService extends Service {
                         }
 
                         if (kodiMovies) {
-                            return kodi.Player.Open({item: {movieid: kodiMovies[0].movieid}});
+                            return kodi.Player.Open({item: {movieid: kodiMovies[0].movieid}})
                         }
                     }
                 })
@@ -118,7 +118,7 @@ module.exports = class KodiService extends Service {
                     name: bonjourService.name
                 },
                 privateData: {
-                    ip: bonjourService.addresses[0],
+                    ip: this._getIPV4Address(bonjourService.addresses),
                     port: bonjourService.port,
                     id: bonjourService.fqdn
                 },
@@ -137,6 +137,51 @@ module.exports = class KodiService extends Service {
         }).catch(err => {
             this.log.error(err)
         });
+    }
+
+    playPause(roomId) {
+        const criteria = {}
+        if (roomId) {
+            criteria.roomId = roomId
+        }
+        return this.lisa.findDevices(criteria).then(devices => {
+            if (devices && devices.length > 0) {
+                const device = devices[0]
+                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+                return kodi.Player.GetActivePlayers().then(data => {
+                    return kodi.Player.PlayPause({playerid: data.result[0].playerid})
+                })
+            }
+            return Promise.resolve()
+        })
+    }
+
+    stop(roomId) {
+        const criteria = {}
+        if (roomId) {
+            criteria.roomId = roomId
+        }
+        return this.lisa.findDevices(criteria).then(devices => {
+            if (devices && devices.length > 0) {
+                const device = devices[0]
+                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+                return kodi.Player.GetActivePlayers().then(data => {
+                    return kodi.Player.Stop({playerid: data.result[0].playerid})
+                })
+            }
+            return Promise.resolve()
+        })
+    }
+
+    _getIPV4Address(addresses) {
+        let ipv4Adress
+        for (let address of addresses) {
+            if (address.indexOf('::') == -1) {
+                ipv4Adress = address
+                break
+            }
+        }
+        return ipv4Adress
     }
 }
 
