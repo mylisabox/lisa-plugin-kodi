@@ -43,7 +43,7 @@ module.exports = class KodiService extends Service {
                             })
                         }
 
-                        if (kodiShows) {
+                        if (kodiShows && kodiShows.length > 0) {
                             return kodi.VideoLibrary.GetEpisodes({tvshowid: kodiShows[0].tvshowid}).then(data => {
                                 if (data.error) {
                                     return Promise.reject(data.error)
