@@ -24,6 +24,13 @@ module.exports = class KodiService extends Service {
         if (roomId) {
             criteria.roomId = roomId
         }
+        if (season) {
+            season = parseInt(season)
+        }
+        if (episode) {
+            episode = parseInt(episode)
+        }
+
         return this.lisa.findDevices(criteria).then(devices => {
             if (devices && devices.length > 0) {
                 const device = devices[0]
@@ -44,7 +51,15 @@ module.exports = class KodiService extends Service {
                         }
 
                         if (kodiShows && kodiShows.length > 0) {
-                            return kodi.VideoLibrary.GetEpisodes({tvshowid: kodiShows[0].tvshowid}).then(data => {
+                            const criteria = {
+                                tvshowid: kodiShows[0].tvshowid,
+                                properties: ["title", "thumbnail", "playcount", "episode", "season", "showtitle",
+                                    "tvshowid", "uniqueid"]
+                            }
+                            if (season) {
+                                criteria.season = season
+                            }
+                            return kodi.VideoLibrary.GetEpisodes(criteria).then(data => {
                                 if (data.error) {
                                     return Promise.reject(data.error)
                                 }
@@ -53,14 +68,19 @@ module.exports = class KodiService extends Service {
                                     if (episodes.length > 0) {
                                         if (episode) {
                                             const foundEpisodes = episodes.filter(item => {
-                                                return item.label.toLowerCase().indexOf(season + 'x' + episode + '.') != -1
+                                                return item.episode === episode
                                             })
                                             return kodi.Player.Open({item: {episodeid: foundEpisodes[0].episodeid}})
                                         }
                                         else {
+                                            const episodesToWatch = episodes.filter(item => {
+                                                return item.playcount == 0
+                                            })
                                             return kodi.Player.Open({
                                                 item: {
-                                                    episodeid: episodes[episodes.length - 1].episodeid
+                                                    episodeid: episodesToWatch.length == 0 ?
+                                                        episodes[episodes.length - 1].episodeid :
+                                                        episodesToWatch[0].episodeid
                                                 }
                                             })
                                         }
