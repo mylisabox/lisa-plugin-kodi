@@ -1,14 +1,11 @@
 'use strict'
 
-const Service = require('lisa-plugin').Service
+const Driver = require('lisa-plugin').Driver
 const Kodi = require('kodi-rpc')
 
-/**
- * @module KodiService
- * @description Kodi service
- */
-module.exports = class KodiService extends Service {
+module.exports = class KodiDriver extends Driver {
     init() {
+        this.devices = []
         this._browser = this.lisa.bonjour.find({type: 'http'}, service => {
             this.log.debug('Found an HTTP server:', service)
             if (service.fqdn.toLowerCase().indexOf('kodi') != -1 || service.fqdn.toLowerCase().indexOf('osmc') != -1
@@ -17,6 +14,61 @@ module.exports = class KodiService extends Service {
             }
         })
         return Promise.resolve()
+    }
+
+    saveDevice(deviceData) {
+        return this.lisa.createOrUpdateDevices(deviceData)
+    }
+
+    getDevices() {
+        return Promise.resolve(this.devices)
+    }
+
+    getDevicesData(devices) {
+        return Promise.resolve(devices)
+    }
+
+    setDeviceValue(device, key, newValue) {
+
+    }
+
+    setDevicesValue(devices, key, newValue) {
+
+    }
+
+    unload() {
+        this._browser.stop()
+        return Promise.resolve()
+    }
+
+    manageDeviceFromBonjourService(bonjourService) {
+        this.lisa.findDevices().then(devices => {
+            const newDevice = {
+                name: bonjourService.name,
+                type: this.lisa.DEVICE_TYPE.MEDIA,
+                data: {
+                    name: bonjourService.name
+                },
+                privateData: {
+                    ip: this._getIPV4Address(bonjourService.addresses),
+                    port: bonjourService.port,
+                    id: bonjourService.fqdn
+                },
+                template: require('../widgets/kodi.json')
+            }
+            let found = false
+            for (let device of devices) {
+                if (device.privateData.id == bonjourService.fqdn) {
+                    found = true
+                    break
+                }
+            }
+            if (!found) {
+                this.devices.push(newDevice)
+            }
+        }).catch(err => {
+            this.log.error(err)
+        });
     }
 
     playTvShow(show, season, episode, roomId) {
@@ -129,36 +181,6 @@ module.exports = class KodiService extends Service {
         return Promise.resolve()
     }
 
-    manageDeviceFromBonjourService(bonjourService) {
-        this.lisa.findDevices().then(devices => {
-            const newDevice = {
-                name: bonjourService.name,
-                type: this.lisa.DEVICE_TYPE.MEDIA,
-                data: {
-                    name: bonjourService.name
-                },
-                privateData: {
-                    ip: this._getIPV4Address(bonjourService.addresses),
-                    port: bonjourService.port,
-                    id: bonjourService.fqdn
-                },
-                template: require('../../widgets/kodi.json')
-            }
-            for (let device of devices) {
-                if (device.privateData.id == bonjourService.fqdn) {
-                    newDevice.id = device.id
-                    newDevice.roomId = device.roomId
-                    newDevice.name = device.name
-                    newDevice.data.name = device.data.name
-                    break
-                }
-            }
-            return this.lisa.createOrUpdateDevices(newDevice)
-        }).catch(err => {
-            this.log.error(err)
-        });
-    }
-
     playPause(roomId) {
         const criteria = {}
         if (roomId) {
@@ -204,4 +226,3 @@ module.exports = class KodiService extends Service {
         return ipv4Adress
     }
 }
-

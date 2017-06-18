@@ -22,21 +22,25 @@ module.exports = [
             },
             {
                 controlType: 'textbox',
-                type: 'url',
-                name: 'url',
+                type: 'ip',
+                name: 'ip',
                 label: {
                     en: 'URL'
                 },
-                required: true
+                required: true,
+                private: true
             },
             {
                 controlType: 'textbox',
                 type: 'number',
+                maxLength: 4,
+                minLength: 2,
                 name: 'port',
                 label: {
                     en: 'Port'
                 },
-                required: true
+                required: true,
+                private: true
             },
             {
                 controlType: 'textbox',

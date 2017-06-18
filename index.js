@@ -10,16 +10,8 @@ module.exports = class KodiPlugin extends Plugin {
      * @returns Promise
      */
     init() {
-        return this.services.KodiService.init()
+        return super.init()
     }
-
-    /**
-     * Called automatically to search for new devices
-     * @return Promise
-
-     searchDevices() {
-    return this.services.HUEService.searchLights()
-  }*/
 
     /**
      * Called when
@@ -28,13 +20,32 @@ module.exports = class KodiPlugin extends Plugin {
      * @return Promise
      */
     interact(action, infos) {
-        return this.services.ChatBotService.interact(action, infos)
+        let room = infos.fields.room
+        if (room) {
+            room = room.id
+        }
+        let episode = infos.fields.episode
+        if (episode) {
+            episode = ("0" + episode).slice(-2)
+        }
+        switch (action) {
+            case "PLAY_TV_SHOW":
+                return this.drivers.kodi.playTvShow(infos.fields.show, infos.fields.season, episode, room)
+            case "PLAY_MOVIE":
+                return this.drivers.kodi.playMovie(infos.fields.movie, room)
+            case "PAUSE_MEDIA_CENTER":
+            case "PLAY_MEDIA_CENTER":
+                return this.drivers.kodi.playPause(room)
+            case "STOP_MEDIA_CENTER":
+                return this.drivers.kodi.stop(room)
+        }
+        return Promise.resolve()
     }
 
     constructor(app) {
         super(app, {
-            api: require('./api'),
             config: require('./config'),
+            drivers: require('./drivers'),
             pkg: require('./package')
         })
     }
