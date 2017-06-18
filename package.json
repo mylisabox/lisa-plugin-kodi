@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "kodi-rpc": "^1.0.0",
-    "lisa-plugin": "^0.0.14"
+    "lisa-plugin": "^0.0.15"
   },
   "devDependencies": {
     "eslint": "^3.10.2",
