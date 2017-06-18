@@ -34,6 +34,7 @@ module.exports = class KodiPlugin extends Plugin {
     constructor(app) {
         super(app, {
             api: require('./api'),
+            config: require('./config'),
             pkg: require('./package')
         })
     }
