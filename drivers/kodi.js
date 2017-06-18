@@ -8,8 +8,8 @@ module.exports = class KodiDriver extends Driver {
         this.devices = []
         this._browser = this.lisa.bonjour.find({type: 'http'}, service => {
             this.log.debug('Found an HTTP server:', service)
-            if (service.fqdn.toLowerCase().indexOf('kodi') != -1 || service.fqdn.toLowerCase().indexOf('osmc') != -1
-                || service.fqdn.toLowerCase().indexOf('libreelec') != -1 || service.fqdn.toLowerCase().indexOf('xbmc') != -1) {
+            if (service.fqdn.toLowerCase().indexOf('kodi') !== -1 || service.fqdn.toLowerCase().indexOf('osmc') !== -1
+                || service.fqdn.toLowerCase().indexOf('libreelec') !== -1 || service.fqdn.toLowerCase().indexOf('xbmc') !== -1) {
                 this.manageDeviceFromBonjourService(service)
             }
         })
@@ -58,7 +58,7 @@ module.exports = class KodiDriver extends Driver {
             }
             let found = false
             for (let device of devices) {
-                if (device.privateData.id == bonjourService.fqdn) {
+                if (device.privateData.id === bonjourService.fqdn) {
                     found = true
                     break
                 }
@@ -86,9 +86,8 @@ module.exports = class KodiDriver extends Driver {
         return this.lisa.findDevices(criteria).then(devices => {
             if (devices && devices.length > 0) {
                 const device = devices[0]
-                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+                const kodi = this._getKodi(device)
                 return kodi.VideoLibrary.GetTVShows().then(data => {
-                    console.log(data)
                     if (data.error) {
                         return Promise.reject(data.error)
                     }
@@ -96,9 +95,9 @@ module.exports = class KodiDriver extends Driver {
                         let kodiShows = data.result.tvshows.filter(function (item) {
                             return show.toLowerCase() === item.label.toLowerCase() ? item : null
                         })
-                        if (kodiShows.length == 0) {
+                        if (kodiShows.length === 0) {
                             kodiShows = data.result.tvshows.filter(function (item) {
-                                return item.label.toLowerCase().indexOf(show.toLowerCase()) != -1 ? item : null
+                                return item.label.toLowerCase().indexOf(show.toLowerCase()) !== -1 ? item : null
                             })
                         }
 
@@ -126,11 +125,11 @@ module.exports = class KodiDriver extends Driver {
                                         }
                                         else {
                                             const episodesToWatch = episodes.filter(item => {
-                                                return item.playcount == 0
+                                                return item.playcount === 0
                                             })
                                             return kodi.Player.Open({
                                                 item: {
-                                                    episodeid: episodesToWatch.length == 0 ?
+                                                    episodeid: episodesToWatch.length === 0 ?
                                                         episodes[episodes.length - 1].episodeid :
                                                         episodesToWatch[0].episodeid
                                                 }
@@ -157,7 +156,6 @@ module.exports = class KodiDriver extends Driver {
                 const device = devices[0]
                 const kodi = new Kodi(device.privateData.ip, device.privateData.port)
                 return kodi.VideoLibrary.GetMovies().then(data => {
-                    console.log(data)
                     if (data.error) {
                         return Promise.reject(data.error)
                     }
@@ -165,9 +163,9 @@ module.exports = class KodiDriver extends Driver {
                         let kodiMovies = data.result.movies.filter(function (item) {
                             return movie.toLowerCase() === item.label.toLowerCase() ? item : null
                         })
-                        if (kodiMovies.length == 0) {
+                        if (kodiMovies.length === 0) {
                             kodiMovies = data.result.movies.filter(function (item) {
-                                return item.label.toLowerCase().indexOf(movie.toLowerCase()) != -1 ? item : null
+                                return item.label.toLowerCase().indexOf(movie.toLowerCase()) !== -1 ? item : null
                             })
                         }
 
@@ -218,11 +216,20 @@ module.exports = class KodiDriver extends Driver {
     _getIPV4Address(addresses) {
         let ipv4Adress
         for (let address of addresses) {
-            if (address.indexOf('::') == -1) {
+            if (address.indexOf('::') === -1) {
                 ipv4Adress = address
                 break
             }
         }
         return ipv4Adress
+    }
+
+    _getKodi(device) {
+        let url = device.privateData.ip
+        if (device.privateData.login && device.privateData.login !== '' && device.privateData.password
+            && device.privateData.password !== '') {
+            url = device.privateData.login + ':' + device.privateData.password + '@' + device.privateData.ip
+        }
+        return new Kodi(url, device.privateData.port)
     }
 }
