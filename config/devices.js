@@ -11,15 +11,11 @@ module.exports = [
             en: 'Add XBMC KODI media center',
             fr: 'Ajout d\'un média center XBMC KODI'
         },
+        driver: 'kodi',
+        template: template,
+        type: 'media',
         image: 'kodi_logo.png',
         settings: [
-            {
-                controlType: 'textbox',
-                type: 'hidden',
-                name: 'template',
-                defaultValue: template,
-                required: true
-            },
             {
                 controlType: 'textbox',
                 type: 'ip',
