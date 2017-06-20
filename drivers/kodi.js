@@ -46,6 +46,7 @@ module.exports = class KodiDriver extends Driver {
             const newDevice = {
                 name: bonjourService.name,
                 type: this.lisa.DEVICE_TYPE.MEDIA,
+                driver: 'vpl',
                 data: {
                     name: bonjourService.name
                 },
@@ -65,6 +66,7 @@ module.exports = class KodiDriver extends Driver {
             }
             if (!found) {
                 this.devices.push(newDevice)
+                return this.lisa.createOrUpdateDevices(newDevice)
             }
         }).catch(err => {
             this.log.error(err)
