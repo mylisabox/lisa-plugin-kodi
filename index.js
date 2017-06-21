@@ -29,6 +29,16 @@ module.exports = class KodiPlugin extends Plugin {
             episode = ("0" + episode).slice(-2)
         }
         switch (action) {
+            case "MUTE_VOLUME":
+                return this.drivers.kodi.mute(room)
+            case "UNMUTE_VOLUME":
+                return this.drivers.kodi.unmute(room)
+            case "SET_VOLUME":
+                return this.drivers.kodi.setVolume(infos.fields.number, room)
+            case "INCREASE_VOLUME":
+                return this.drivers.kodi.increaseVolume(infos.fields.number, room)
+            case "DECREASE_VOLUME":
+                return this.drivers.kodi.decreaseVolume(infos.fields.number, room)
             case "PLAY_TV_SHOW":
                 return this.drivers.kodi.playTvShow(infos.fields.show, infos.fields.season, episode, room)
             case "PLAY_MOVIE":

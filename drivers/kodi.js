@@ -6,7 +6,7 @@ const Kodi = require('kodi-rpc')
 module.exports = class KodiDriver extends Driver {
     init() {
         this.devices = []
-        this._browser = this.lisa.bonjour.find({type: 'http'}, service => {
+        this._browser = this.lisa.bonjour.find({ type: 'http' }, service => {
             this.log.debug('Found an HTTP server:', service)
             if (service.fqdn.toLowerCase().indexOf('kodi') !== -1 || service.fqdn.toLowerCase().indexOf('osmc') !== -1
                 || service.fqdn.toLowerCase().indexOf('libreelec') !== -1 || service.fqdn.toLowerCase().indexOf('xbmc') !== -1) {
@@ -73,6 +73,103 @@ module.exports = class KodiDriver extends Driver {
         });
     }
 
+    mute(roomId) {
+        const criteria = {}
+        if (roomId) {
+            criteria.roomId = roomId
+        }
+        return this.lisa.findDevices(criteria).then(devices => {
+            if (devices && devices.length > 0) {
+                const device = devices[0]
+                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+
+                return kodi.Application.SetMute([true])
+            }
+            return Promise.resolve()
+        })
+    }
+
+    unmute(roomId) {
+        const criteria = {}
+        if (roomId) {
+            criteria.roomId = roomId
+        }
+        return this.lisa.findDevices(criteria).then(devices => {
+            if (devices && devices.length > 0) {
+                const device = devices[0]
+                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+                return kodi.Application.SetMute([false])
+            }
+            return Promise.resolve()
+        })
+    }
+
+    setVolume(level, roomId) {
+        const criteria = {}
+        if (roomId) {
+            criteria.roomId = roomId
+        }
+        level = parseInt(level)
+        return this.lisa.findDevices(criteria).then(devices => {
+            if (devices && devices.length > 0) {
+                const device = devices[0]
+                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+                return kodi.Application.SetVolume({ volume: level })
+            }
+            return Promise.resolve()
+        })
+    }
+
+    increaseVolume(steps, roomId) {
+        const criteria = {}
+        if (roomId) {
+            criteria.roomId = roomId
+        }
+        if (steps) {
+            steps = steps.parseInt(steps)
+        }
+        else {
+            steps = 1
+        }
+        return this.lisa.findDevices(criteria).then(devices => {
+            if (devices && devices.length > 0) {
+                const device = devices[0]
+                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+                const volumeCommands = []
+                for (let i = 0; i < steps; i++) {
+                    volumeCommands.push(kodi.Application.SetVolume({ volume: 'increment' }))
+                }
+                return Promise.all(volumeCommands)
+            }
+            return Promise.resolve()
+        })
+    }
+
+    decreaseVolume(steps, roomId) {
+        const criteria = {}
+        if (roomId) {
+            criteria.roomId = roomId
+        }
+        if (steps) {
+            steps = steps.parseInt(steps)
+        }
+        else {
+            steps = 1
+        }
+        return this.lisa.findDevices(criteria).then(devices => {
+            if (devices && devices.length > 0) {
+                const device = devices[0]
+                const kodi = new Kodi(device.privateData.ip, device.privateData.port)
+                const volumeCommands = []
+                for (let i = 0; i < steps; i++) {
+                    volumeCommands.push(kodi.Application.SetVolume({ volume: 'decrement' }))
+                }
+                return Promise.all(volumeCommands)
+            }
+            return Promise.resolve()
+        })
+    }
+
     playTvShow(show, season, episode, roomId) {
         const criteria = {}
         if (roomId) {
@@ -123,7 +220,7 @@ module.exports = class KodiDriver extends Driver {
                                             const foundEpisodes = episodes.filter(item => {
                                                 return item.episode === episode
                                             })
-                                            return kodi.Player.Open({item: {episodeid: foundEpisodes[0].episodeid}})
+                                            return kodi.Player.Open({ item: { episodeid: foundEpisodes[0].episodeid } })
                                         }
                                         else {
                                             const episodesToWatch = episodes.filter(item => {
@@ -172,7 +269,7 @@ module.exports = class KodiDriver extends Driver {
                         }
 
                         if (kodiMovies) {
-                            return kodi.Player.Open({item: {movieid: kodiMovies[0].movieid}})
+                            return kodi.Player.Open({ item: { movieid: kodiMovies[0].movieid } })
                         }
                     }
                 })
@@ -191,7 +288,7 @@ module.exports = class KodiDriver extends Driver {
                 const device = devices[0]
                 const kodi = new Kodi(device.privateData.ip, device.privateData.port)
                 return kodi.Player.GetActivePlayers().then(data => {
-                    return kodi.Player.PlayPause({playerid: data.result[0].playerid})
+                    return kodi.Player.PlayPause({ playerid: data.result[0].playerid })
                 })
             }
             return Promise.resolve()
@@ -208,7 +305,7 @@ module.exports = class KodiDriver extends Driver {
                 const device = devices[0]
                 const kodi = new Kodi(device.privateData.ip, device.privateData.port)
                 return kodi.Player.GetActivePlayers().then(data => {
-                    return kodi.Player.Stop({playerid: data.result[0].playerid})
+                    return kodi.Player.Stop({ playerid: data.result[0].playerid })
                 })
             }
             return Promise.resolve()
