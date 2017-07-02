@@ -126,7 +126,7 @@ module.exports = class KodiDriver extends Driver {
             criteria.roomId = roomId
         }
         if (steps) {
-            steps = steps.parseInt(steps)
+            steps = parseInt(steps)
         }
         else {
             steps = 1
@@ -151,7 +151,7 @@ module.exports = class KodiDriver extends Driver {
             criteria.roomId = roomId
         }
         if (steps) {
-            steps = steps.parseInt(steps)
+            steps = parseInt(steps)
         }
         else {
             steps = 1
