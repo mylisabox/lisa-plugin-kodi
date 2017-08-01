@@ -215,7 +215,7 @@ module.exports = class KodiDriver extends Driver {
                                 }
                                 else {
                                     const episodes = data.result.episodes
-                                    if (episodes.length > 0) {
+                                    if (episodes && episodes.length > 0) {
                                         if (episode) {
                                             const foundEpisodes = episodes.filter(item => {
                                                 return item.episode === episode
