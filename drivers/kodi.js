@@ -7,7 +7,6 @@ module.exports = class KodiDriver extends Driver {
     init() {
         this.devices = []
         this._browser = this.lisa.bonjour.find({ type: 'http' }, service => {
-            this.log.debug('Found an HTTP server:', service)
             if (service.fqdn.toLowerCase().indexOf('kodi') !== -1 || service.fqdn.toLowerCase().indexOf('osmc') !== -1
                 || service.fqdn.toLowerCase().indexOf('libreelec') !== -1 || service.fqdn.toLowerCase().indexOf('xbmc') !== -1) {
                 this.manageDeviceFromBonjourService(service)
@@ -46,7 +45,7 @@ module.exports = class KodiDriver extends Driver {
             const newDevice = {
                 name: bonjourService.name,
                 type: this.lisa.DEVICE_TYPE.MEDIA,
-                driver: 'vpl',
+                driver: 'kodi',
                 data: {
                     name: bonjourService.name
                 },
@@ -268,7 +267,7 @@ module.exports = class KodiDriver extends Driver {
                             })
                         }
 
-                        if (kodiMovies) {
+                        if (kodiMovies.length > 0) {
                             return kodi.Player.Open({ item: { movieid: kodiMovies[0].movieid } })
                         }
                     }
