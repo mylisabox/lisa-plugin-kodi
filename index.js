@@ -20,7 +20,7 @@ module.exports = class KodiPlugin extends Plugin {
      * @return Promise
      */
     interact(action, infos) {
-        let room = infos.fields.room
+      let room = infos.fields.room || infos.context.room
         if (room) {
             room = room.id
         }
