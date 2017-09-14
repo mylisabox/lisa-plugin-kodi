@@ -35,8 +35,10 @@ module.exports = class KodiPlugin extends Plugin {
         return this.drivers.kodi.unmute(room)
       case "SET_VOLUME":
         return this.drivers.kodi.setVolume(infos.fields.number, room)
+      case "INCREASE_VOLUME_AGAIN":
       case "INCREASE_VOLUME":
         return this.drivers.kodi.increaseVolume(infos.fields.number, room)
+      case "DECREASE_VOLUME_AGAIN":
       case "DECREASE_VOLUME":
         return this.drivers.kodi.decreaseVolume(infos.fields.number, room)
       case "PLAY_TV_SHOW":
