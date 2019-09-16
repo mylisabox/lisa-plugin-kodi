@@ -1,10 +1,10 @@
 {
-  "type": "vbox",
+  "type": "column",
   "children": [
     {
-      "type": "label",
-      "name": "name",
-      "value": "name"
+      "type": "text",
+      "id": "name",
+      "text": "$name$"
     }
   ]
 }
