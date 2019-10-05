@@ -15,49 +15,53 @@ module.exports = [
         template: template,
         type: 'media',
         image: 'kodi_logo.png',
-        settings: [
-            {
-                controlType: 'textbox',
-                type: 'ip',
-                name: 'ip',
-                label: {
-                    en: 'URL'
+        settings: {
+            'type': 'column',
+            'crossAxisAlignment': 3,
+            'children': [
+                {
+                    controlType: 'textbox',
+                    type: 'ip',
+                    name: 'ip',
+                    label: {
+                        en: 'URL'
+                    },
+                    required: true,
+                    private: true
                 },
-                required: true,
-                private: true
-            },
-            {
-                controlType: 'textbox',
-                type: 'number',
-                maxLength: 4,
-                minLength: 2,
-                name: 'port',
-                label: {
-                    en: 'Port'
+                {
+                    controlType: 'textbox',
+                    type: 'number',
+                    maxLength: 4,
+                    minLength: 2,
+                    name: 'port',
+                    label: {
+                        en: 'Port'
+                    },
+                    required: true,
+                    private: true
                 },
-                required: true,
-                private: true
-            },
-            {
-                controlType: 'textbox',
-                type: 'text',
-                name: 'login',
-                label: {
-                    en: 'Login',
-                    fr: 'Identifiant'
+                {
+                    controlType: 'textbox',
+                    type: 'text',
+                    name: 'login',
+                    label: {
+                        en: 'Login',
+                        fr: 'Identifiant'
+                    },
+                    private: true
                 },
-                private: true
-            },
-            {
-                controlType: 'textbox',
-                type: 'password',
-                name: 'password',
-                label: {
-                    en: 'Password',
-                    fr: 'Mot de passe'
-                },
-                private: true
-            }
-        ]
+                {
+                    controlType: 'textbox',
+                    type: 'password',
+                    name: 'password',
+                    label: {
+                        en: 'Password',
+                        fr: 'Mot de passe'
+                    },
+                    private: true
+                }
+            ],
+        }
     }
 ]
