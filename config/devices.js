@@ -20,46 +20,42 @@ module.exports = [
             'crossAxisAlignment': 3,
             'children': [
                 {
-                    controlType: 'textbox',
-                    type: 'ip',
-                    name: 'ip',
-                    label: {
-                        en: 'URL'
-                    },
-                    required: true,
-                    private: true
+                    'type': 'text_field',
+                    'id': 'ip',
+                    'required': true,
+                    'textInputAction': 6,
+                    'decoration': {
+                        'labelText': 'URL*',
+                    }
                 },
                 {
-                    controlType: 'textbox',
-                    type: 'number',
-                    maxLength: 4,
-                    minLength: 2,
-                    name: 'port',
-                    label: {
-                        en: 'Port'
-                    },
-                    required: true,
-                    private: true
+                    'type': 'text_field',
+                    'id': 'port',
+                    'required': true,
+                    'maxLength': 4,
+                    'minLength': 2,
+                    'textInputAction': 6,
+                    'decoration': {
+                        'labelText': 'Port*',
+                    }
                 },
                 {
-                    controlType: 'textbox',
-                    type: 'text',
-                    name: 'login',
-                    label: {
-                        en: 'Login',
-                        fr: 'Identifiant'
-                    },
-                    private: true
+                    'type': 'text_field',
+                    'id': 'login',
+                    'private': true,
+                    'textInputAction': 6,
+                    'decoration': {
+                        'labelText': 'Login',
+                    }
                 },
                 {
-                    controlType: 'textbox',
-                    type: 'password',
-                    name: 'password',
-                    label: {
-                        en: 'Password',
-                        fr: 'Mot de passe'
-                    },
-                    private: true
+                    'type': 'text_field',
+                    'id': 'password',
+                    'private': true,
+                    'textInputAction': 2,
+                    'decoration': {
+                        'labelText': 'Password',
+                    }
                 }
             ],
         }
