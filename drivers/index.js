@@ -1,1 +1,5 @@
-exports.kodi = require('./kodi')
+import kodi from './kodi.js'
+
+export default {
+    'kodi': kodi
+}
